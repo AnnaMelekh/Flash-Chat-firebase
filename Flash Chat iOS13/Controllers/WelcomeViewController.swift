@@ -17,7 +17,7 @@ class WelcomeViewController: UIViewController {
         super.viewDidLoad()
 
         
-        titleLabel.text = "⚡️FlashChat"
+        titleLabel.text = K.appName
         
 //        titleLabel.text = ""
 //        var charIndex: Double = 0.0
