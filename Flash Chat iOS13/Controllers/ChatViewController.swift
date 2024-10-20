@@ -16,6 +16,8 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     
+    let db = Firestore.firestore()
+    
     var messages: [Message] = [
     Message(sender: "1@2.com", body: "Hey!"),
     Message(sender: "2@3.com", body: "Hello!"),
@@ -33,6 +35,21 @@ class ChatViewController: UIViewController {
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
+        //  сущность currentUser доступна из фреймворка FirebaseAuth и ее характеристика email
+        
+        if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
+            
+            db.collection(K.FStore.collectionName).addDocument(data: [
+                K.FStore.senderField: messageSender,
+                K.FStore.bodyField: messageBody
+            ]) { error in
+                if let e = error {
+                    print("error saving data to firestore, \(e)")
+                } else {
+                    print("successfully saved")
+                }
+            }
+        }
     }
     
     @IBAction func logOutPressed(_ sender: UIBarButtonItem) {
