@@ -33,11 +33,14 @@ class ChatViewController: UIViewController {
     }
     
     func loadMessages() {
-        messages = []
         
-        db.collection(K.FStore.collectionName).getDocuments { querySnapshot, error in
+        db.collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { querySnapshot, error in
+                
+            self.messages = []
             if let e = error {
-                print("there was an error retieving data from Firestore")
+                print("there was an error retieving data from Firestore, \(e)")
             } else {
                 if let snapshotDocuments = querySnapshot?.documents {
                     for doc in snapshotDocuments {
@@ -58,6 +61,8 @@ class ChatViewController: UIViewController {
         }
     }
     
+        
+    
     @IBAction func sendPressed(_ sender: UIButton) {
         //  сущность currentUser доступна из фреймворка FirebaseAuth и ее характеристика email
         
@@ -65,7 +70,8 @@ class ChatViewController: UIViewController {
             
             db.collection(K.FStore.collectionName).addDocument(data: [
                 K.FStore.senderField: messageSender,
-                K.FStore.bodyField: messageBody
+                K.FStore.bodyField: messageBody,
+                K.FStore.dateField: Date().timeIntervalSince1970
             ]) { error in
                 if let e = error {
                     print("error saving data to firestore, \(e)")
